@@ -1,0 +1,90 @@
+/**
+ * SafeWeb - Common Design System & Variables
+ * Estética acadêmica, limpa, moderna e com alto contraste de acessibilidade
+ */
+
+:root {
+  /* Cores Principais */
+  --color-primary: #1e3a8a;       /* Blue 900 */
+  --color-primary-light: #3b82f6; /* Blue 500 */
+  --color-primary-dark: #172554;  /* Blue 950 */
+  --color-accent: #0ea5e9;        /* Sky 500 */
+
+  /* Cores de Superfície e Fundo */
+  --bg-app: #f8fafc;              /* Slate 50 */
+  --bg-card: #ffffff;             /* White */
+  --bg-card-subtle: #f1f5f9;      /* Slate 100 */
+  --border-color: #e2e8f0;        /* Slate 200 */
+  --border-color-strong: #cbd5e1; /* Slate 300 */
+
+  /* Tipografia */
+  --text-main: #0f172a;           /* Slate 900 */
+  --text-muted: #64748b;          /* Slate 500 */
+  --text-light: #94a3b8;          /* Slate 400 */
+
+  /* Cores Semânticas de Estado e Risco */
+  --status-online: #10b981;       /* Emerald 500 */
+  --status-online-bg: #ecfdf5;    /* Emerald 50 */
+  --status-online-border: #a7f3d0;/* Emerald 200 */
+
+  --status-offline: #ef4444;      /* Red 500 */
+  --status-offline-bg: #fef2f2;   /* Red 50 */
+  --status-offline-border: #fecaca;/* Red 200 */
+
+  --status-checking: #3b82f6;     /* Blue 500 */
+  --status-checking-bg: #eff6ff;  /* Blue 50 */
+  --status-checking-border: #bfdbfe;
+
+  --risk-low: #10b981;            /* Verde - Nenhum risco conhecido */
+  --risk-low-bg: #ecfdf5;
+  --risk-attention: #f59e0b;      /* Âmbar - Atenção */
+  --risk-attention-bg: #fffbeb;
+  --risk-high: #dc2626;           /* Vermelho - Possível ameaça */
+  --risk-high-bg: #fef2f2;
+
+  /* Sombras e Raios */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-full: 9999px;
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  width: 420px;
+  min-height: 520px;
+  max-height: 600px;
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-primary-dark);
+  overflow-x: hidden;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  font-size: 13px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  width: 420px;
+  min-height: 520px;
+  max-height: 600px;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}

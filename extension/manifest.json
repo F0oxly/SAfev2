@@ -1,0 +1,37 @@
+{
+  "manifest_version": 3,
+  "name": "SafeWeb - Segurança & Monitoramento",
+  "version": "1.1.0",
+  "author": "Iury & Equipe",
+  "description": "Monitoramento de disponibilidade de sites e análise de confiabilidade de notícias com o SafeWeb Informa.",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "SafeWeb - Painel de Controle",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background/service-worker.js",
+    "type": "module"
+  },
+  "permissions": [
+    "storage",
+    "alarms",
+    "notifications",
+    "activeTab",
+    "tabs",
+    "scripting"
+  ],
+  "host_permissions": [
+    "http://localhost:3000/*",
+    "<all_urls>"
+  ]
+}

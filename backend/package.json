@@ -1,0 +1,26 @@
+{
+  "name": "safeweb-backend",
+  "version": "1.0.0",
+  "description": "SafeWeb - Backend de Monitoramento Contínuo e Gateway de Segurança",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "keywords": [
+    "safeweb",
+    "monitoring",
+    "security",
+    "chrome-extension"
+  ],
+  "author": "Iury",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^6.0.1"
+  }
+}

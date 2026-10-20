@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<!-- SafeWeb - Desenvolvido integralmente por Iury -->
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafeWeb Dashboard</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <!-- Cabeçalho Principal -->
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-icon">
+        <img src="../icons/icon-48.png" alt="SafeWeb Logo">
+      </div>
+      <div class="brand-text">
+        <h1>SafeWeb <span class="version-tag">v1.1</span></h1>
+        <span id="backend-status-indicator">Monitoramento Ativo</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button id="btn-refresh-all" class="icon-btn" title="Atualizar todos os sites">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Abas de Navegação -->
+  <nav class="nav-tabs">
+    <button class="tab-btn active" data-tab="tab-dashboard" title="Sites Monitorados">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="7" height="7"></rect>
+        <rect x="14" y="3" width="7" height="7"></rect>
+        <rect x="14" y="14" width="7" height="7"></rect>
+        <rect x="3" y="14" width="7" height="7"></rect>
+      </svg>
+      Sites
+    </button>
+    <button class="tab-btn highlight-tab" data-tab="tab-informa" title="SafeWeb Informa (Análise de Notícias)">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"></path>
+        <path d="M18 14h-8"></path>
+        <path d="M15 18h-5"></path>
+        <path d="M10 6h8v4h-8V6Z"></path>
+      </svg>
+      Informa
+    </button>
+    <button class="tab-btn" data-tab="tab-add" title="Cadastrar Novo Site">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+      Cadastrar
+    </button>
+    <button class="tab-btn" data-tab="tab-history" title="Histórico de Ocorrências">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <polyline points="12 6 12 12 16 14"></polyline>
+      </svg>
+      Histórico
+    </button>
+    <button class="tab-btn" data-tab="tab-report" title="Denunciar Site Suspeito">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+        <line x1="12" y1="9" x2="12" y2="13"></line>
+        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+      </svg>
+      Denunciar
+    </button>
+    <button class="tab-btn" data-tab="tab-settings" title="Configurações">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+      </svg>
+      Ajustes
+    </button>
+  </nav>
+
+  <!-- Conteúdo Principal -->
+  <main class="app-body">
+    <!-- ABA 1: DASHBOARD / SITES -->
+    <section id="tab-dashboard" class="tab-content active">
+      <!-- Barra de Resumo / Estatísticas -->
+      <div class="stats-bar">
+        <div class="stat-item">
+          <div id="stat-total" class="stat-value">0</div>
+          <div class="stat-label">Total</div>
+        </div>
+        <div class="stat-item">
+          <div id="stat-online" class="stat-value online">0</div>
+          <div class="stat-label">Online</div>
+        </div>
+        <div class="stat-item">
+          <div id="stat-offline" class="stat-value offline">0</div>
+          <div class="stat-label">Offline</div>
+        </div>
+        <div class="stat-item">
+          <div id="stat-uptime" class="stat-value uptime">100%</div>
+          <div class="stat-label">Uptime</div>
+        </div>
+      </div>
+
+      <!-- Barra de Pesquisa e Filtros -->
+      <div class="filter-bar">
+        <input type="text" id="search-sites" class="search-input" placeholder="🔍 Buscar por nome ou URL...">
+        <div class="filter-chips">
+          <button class="filter-chip active" data-site-filter="all">Todos</button>
+          <button class="filter-chip" data-site-filter="online">Online</button>
+          <button class="filter-chip" data-site-filter="offline">Offline</button>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <span class="section-title">Domínios Monitorados</span>
+        <div class="section-actions">
+          <button id="btn-export-sites" class="btn-mini" title="Exportar dados de monitoramento em JSON">Exportar</button>
+        </div>
+      </div>
+
+      <!-- Lista Dinâmica de Sites -->
+      <div id="sites-container" class="site-list">
+        <!-- Inserido dinamicamente via JS -->
+      </div>
+    </section>
+
+    <!-- ABA SAFEWEB INFORMA: ANÁLISE DE NOTÍCIAS & DESINFORMAÇÃO -->
+    <!-- ABA SAFEWEB INFORMA: ANÁLISE E VERIFICAÇÃO DE NOTÍCIAS -->
+    <section id="tab-informa" class="tab-content">
+      <!-- Banner Educativo -->
+      <div class="informa-banner">
+        <div class="informa-banner-header">
+          <span class="informa-badge">SafeWeb Informa</span>
+          <span class="informa-status-tag">Verificador de Notícias</span>
+        </div>
+        <p class="informa-banner-desc">
+          Auditoria de indícios de confiabilidade, detecção de sensacionalismo e cruzamento com fontes oficiais de checagem.
+        </p>
+      </div>
+
+      <!-- Seletor de Modo de Entrada -->
+      <div class="informa-mode-selector">
+        <button id="btn-informa-mode-url" class="btn-mode active" type="button">🔗 Link</button>
+        <button id="btn-informa-mode-text" class="btn-mode" type="button">📝 Texto</button>
+        <button id="btn-informa-mode-demo" class="btn-mode highlight" type="button">⚡ Exemplos de Teste</button>
+      </div>
+
+      <!-- Painel 1: Por URL -->
+      <div id="informa-panel-url" class="form-card">
+        <button id="btn-informa-autofill" type="button" class="btn-secondary autofill-btn" style="margin-bottom: 8px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+          Capturar Aba Atual Aberta
+        </button>
+
+        <div class="form-group">
+          <label class="form-label" for="input-news-url">Endereço da Notícia (URL)</label>
+          <input type="text" id="input-news-url" class="form-input" placeholder="https://site-da-noticia.com/materia">
+          <span class="form-hint">O SafeWeb extrai o domínio, título, veículo, autoria e dados da publicação.</span>
+        </div>
+      </div>
+
+      <!-- Painel 2: Por Texto -->
+      <div id="informa-panel-text" class="form-card" style="display: none;">
+        <div class="form-group">
+          <label class="form-label" for="input-news-title">Título ou Assunto (Opcional)</label>
+          <input type="text" id="input-news-title" class="form-input" placeholder="Ex: Matéria sobre saúde ou economia...">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="input-news-text">Texto Principal da Matéria ou Mensagem</label>
+          <textarea id="input-news-text" class="form-input" rows="4" placeholder="Cole aqui o texto da notícia recebida..." style="resize: vertical; font-size: 11.5px;"></textarea>
+          <span class="form-hint">Permite auditar alegações mesmo que a página original esteja fora do ar ou com paywall.</span>
+        </div>
+      </div>
+
+      <!-- Painel 3: Casos de Demonstração / Exemplos -->
+      <div id="informa-panel-demo" class="form-card" style="display: none;">
+        <span class="form-label" style="margin-bottom: 6px;">Exemplos Práticos para Testar:</span>
+        <div id="demo-cases-container" class="demo-buttons-list">
+          <!-- Inserido dinamicamente via JS com botões de 1 clique -->
+        </div>
+        <span class="form-hint" style="margin-top: 6px;">Clique em qualquer caso para testar os diferentes níveis de confiabilidade.</span>
+      </div>
+
+      <!-- Botão de Verificação -->
+      <button id="btn-analyze-news" class="btn-primary" type="button">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        Verificar Informação
+      </button>
+      <div id="informa-analysis-status" class="informa-analysis-status" role="status" aria-live="polite" hidden></div>
+
+      <!-- Caixa de Resultado da Notícia -->
+      <div id="informa-result-box" class="form-card" style="display: none;">
+        <!-- Inserido dinamicamente via JS -->
+      </div>
+    </section>
+
+    <!-- ABA 2: CADASTRAR NOVO SITE -->
+    <section id="tab-add" class="tab-content">
+      <!-- Botão inteligente de captura da aba atual -->
+      <button id="btn-autofill-current-tab" type="button" class="btn-secondary autofill-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+          <line x1="8" y1="21" x2="16" y2="21"></line>
+          <line x1="12" y1="17" x2="12" y2="21"></line>
+        </svg>
+        Capturar Aba Aberta no Navegador
+      </button>
+
+      <div class="form-card">
+        <div class="form-group">
+          <label class="form-label" for="input-site-url">URL ou Domínio</label>
+          <input type="text" id="input-site-url" class="form-input" placeholder="ex: https://exemplo.com" autocomplete="off">
+          <span class="form-hint">Informe o protocolo (HTTP/HTTPS) ou o domínio simples.</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="input-site-alias">Nome / Apelido (Opcional)</label>
+          <input type="text" id="input-site-alias" class="form-input" placeholder="ex: Portal Acadêmico">
+        </div>
+
+        <!-- Preview de Análise Heurística em Tempo Real -->
+        <div id="add-security-preview" class="security-preview" style="display: none;">
+          <div class="security-preview-header">
+            <span class="form-label">Avaliação Preliminar de Risco</span>
+            <span id="preview-risk-badge" class="badge">Analisando...</span>
+          </div>
+          <ul id="preview-risk-reasons" class="security-reasons-list"></ul>
+        </div>
+
+        <button id="btn-save-site" class="btn-primary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          Adicionar ao Monitoramento
+        </button>
+      </div>
+    </section>
+
+    <!-- ABA 3: HISTÓRICO DE OCORRÊNCIAS -->
+    <section id="tab-history" class="tab-content">
+      <div class="section-header">
+        <span class="section-title">Registro de Ocorrências</span>
+        <div class="section-actions">
+          <button id="btn-export-history-json" class="btn-mini" title="Exportar histórico em JSON">JSON</button>
+          <button id="btn-export-history-csv" class="btn-mini" title="Exportar histórico em CSV">CSV</button>
+          <button id="btn-clear-history" class="btn-mini danger" title="Limpar todo o histórico">Limpar</button>
+        </div>
+      </div>
+
+      <!-- Filtros de Histórico -->
+      <div class="filter-chips history-chips">
+        <button class="filter-chip active" data-history-filter="all">Todos</button>
+        <button class="filter-chip" data-history-filter="news_analysis">📰 Notícias</button>
+        <button class="filter-chip" data-history-filter="status_change">Quedas</button>
+        <button class="filter-chip" data-history-filter="recovery">Recuperações</button>
+        <button class="filter-chip" data-history-filter="initial_check">Cadastros</button>
+      </div>
+
+      <div id="history-container" class="history-list">
+        <!-- Inserido dinamicamente via JS -->
+      </div>
+    </section>
+
+    <!-- ABA 4: DENÚNCIA DE SITES SUSPEITOS -->
+    <section id="tab-report" class="tab-content">
+      <button id="btn-report-autofill" type="button" class="btn-secondary autofill-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+          <line x1="12" y1="9" x2="12" y2="13"></line>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+        Preencher com a Aba Atual
+      </button>
+
+      <div class="form-card">
+        <div class="form-group">
+          <label class="form-label" for="report-domain">Domínio a Denunciar</label>
+          <input type="text" id="report-domain" class="form-input" placeholder="ex: site-suspeito.com">
+          <span class="form-hint">Informe o domínio do site que deseja reportar à base comunitária.</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="report-category">Categoria da Denúncia</label>
+          <select id="report-category" class="form-select">
+            <option value="">-- Selecione o tipo de ameaça --</option>
+            <option value="phishing">Phishing ou roubo de contas</option>
+            <option value="scam_financial">Tentativa de golpe financeiro</option>
+            <option value="malware">Distribuição de malware</option>
+            <option value="impersonation">Site falso que imita uma marca</option>
+            <option value="suspicious_redirect">Redirecionamentos suspeitos</option>
+            <option value="spam_fraud">Spam ou fraude</option>
+            <option value="other">Outro comportamento suspeito</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="report-description">Descrição (opcional)</label>
+          <textarea id="report-description" class="form-input" rows="3"
+            placeholder="Descreva brevemente o comportamento suspeito observado..."
+            style="resize: none; font-family: inherit; font-size: 12px;"></textarea>
+          <span class="form-hint">Máx. 500 caracteres. Não inclua senhas ou dados pessoais.</span>
+        </div>
+
+        <button id="btn-submit-report" class="btn-primary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+          Enviar Denúncia
+        </button>
+      </div>
+
+      <!-- Resultado do envio -->
+      <div id="report-result" class="form-card" style="display:none;">
+        <!-- Inserido dinamicamente via JS -->
+      </div>
+
+      <!-- Aviso de privacidade -->
+      <p style="font-size: 10px; color: var(--text-muted); text-align: center; margin-top: 8px; padding: 0 4px; line-height: 1.5;">
+        ⚠️ Denúncias são relatos de usuários, não confirmações automáticas de ameaça.
+        Dados coletados: domínio, categoria, descrição opcional e data/hora.
+        Nenhum dado pessoal é necessário.
+      </p>
+    </section>
+
+    <!-- ABA 6: AJUSTES / CONFIGURAÇÕES -->
+
+    <section id="tab-settings" class="tab-content">
+      <div class="form-card">
+        <div class="form-group">
+          <label class="form-label" for="setting-check-interval">Intervalo de Verificação (Uptime)</label>
+          <select id="setting-check-interval" class="form-select">
+            <option value="1">A cada 1 minuto (Alta frequência)</option>
+            <option value="2">A cada 2 minutos (Recomendado)</option>
+            <option value="5">A cada 5 minutos</option>
+            <option value="10">A cada 10 minutos</option>
+            <option value="15">A cada 15 minutos</option>
+            <option value="30">A cada 30 minutos</option>
+          </select>
+          <span class="form-hint">Frequência com que o alarme em segundo plano testa os sites.</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="setting-sensitivity">Sensibilidade da Análise Heurística</label>
+          <select id="setting-sensitivity" class="form-select">
+            <option value="standard">Padrão (Equilibrado)</option>
+            <option value="strict">Rigorosa / Strict (Maior rigor para auditorias)</option>
+          </select>
+          <span class="form-hint">No modo rigoroso, os limiares de score de risco são mais estritos.</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="setting-backend-url">URL do Backend Local</label>
+          <input type="text" id="setting-backend-url" class="form-input" placeholder="http://localhost:3000">
+          <span class="form-hint">Endereço da API Express para monitoramento estendido.</span>
+        </div>
+
+        <div class="form-group-checkbox">
+          <label class="checkbox-container">
+            <input type="checkbox" id="setting-notifications-enabled">
+            <span class="checkbox-label"><strong>Notificações do Navegador</strong> (Exibir alertas nativos quando sites caírem ou recuperarem)</span>
+          </label>
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-top: 6px;">
+          <button id="btn-save-settings" class="btn-primary" style="flex: 1;">
+            Salvar Ajustes
+          </button>
+          <button id="btn-reset-settings" class="btn-secondary" style="flex: 1;">
+            Padrões
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Rodapé Discreto / Créditos de Autoria -->
+  <footer class="app-footer">
+    <span>SafeWeb &bull; Desenvolvido por <strong>Iury & Equipe</strong></span>
+  </footer>
+
+  <!-- Modal de Detalhes de Risco / Segurança -->
+  <div id="site-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-site-title" class="modal-title">Detalhes do Site</h3>
+        <button id="btn-close-modal" class="btn-close">&times;</button>
+      </div>
+      <div id="modal-site-body" class="modal-body">
+        <!-- Conteúdo do modal inserido via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Flutuante -->
+  <div id="toast" class="toast-container"></div>
+
+  <!-- popup.js importa news-analyzer.js, que importa gemini-analyzer.js como dependência ES Module. -->
+  <script type="module" src="popup.js"></script>
+</body>
+</html>
