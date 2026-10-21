@@ -765,7 +765,15 @@ async function renderDashboard() {
         context: pageContext.context
       });
       if (reputation) {
-        await SitesStorage.update(site.id, getSiteSecurityFields(localAnalysis, reputation));
+        const updatedSite = await SitesStorage.update(
+          site.id,
+          getSiteSecurityFields(localAnalysis, reputation)
+        );
+        if (!updatedSite) {
+          showToast('Este site foi removido durante a verificação.');
+          await renderDashboard();
+          return;
+        }
       }
 
       chrome.runtime.sendMessage({ action: 'CHECK_SINGLE_SITE', siteId: site.id }, async (response) => {

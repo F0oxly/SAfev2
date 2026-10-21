@@ -76,14 +76,14 @@ export class SitesStorage {
    * Atualiza as informações de um site
    * @param {string} id 
    * @param {Object} updates 
-   * @returns {Promise<Object>}
+   * @returns {Promise<Object|null>} O site atualizado ou null se ele foi removido
    */
   static async update(id, updates) {
     const sites = await this.getAll();
     const index = sites.findIndex(s => s.id === id);
 
     if (index === -1) {
-      throw new Error(`Site com ID ${id} não encontrado.`);
+      return null;
     }
 
     const updatedSite = { ...sites[index], ...updates };

@@ -3,8 +3,8 @@
  * Keeps the Gemini API key on the backend and validates model responses.
  */
 
-const GEMINI_MODEL = 'gemini-3.8-flash';
-const GEMINI_TIMEOUT_MS = 12000;
+const GEMINI_MODEL = 'gemini-2.5-flash-lite';
+const GEMINI_TIMEOUT_MS = 25000;
 
 const TRUSTED_DOMAINS = [
   'g1.globo.com', 'globo.com', 'folha.uol.com.br', 'estadao.com.br',
@@ -56,7 +56,12 @@ export class GeminiService {
           signal: controller.signal,
           body: JSON.stringify({
             contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: { temperature: 0.1, maxOutputTokens: 220, topP: 0.8 }
+            generationConfig: {
+              temperature: 0.1,
+              maxOutputTokens: 220,
+              topP: 0.8,
+              responseMimeType: 'application/json'
+            }
           })
         }
       );
@@ -161,7 +166,12 @@ Responda apenas com JSON válido, sem markdown:
           signal: controller.signal,
           body: JSON.stringify({
             contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: { temperature: 0.1, maxOutputTokens: 300, topP: 0.8 },
+            generationConfig: {
+              temperature: 0.1,
+              maxOutputTokens: 300,
+              topP: 0.8,
+              responseMimeType: 'application/json'
+            },
             safetySettings: [
               { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_NONE' },
               { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_NONE' },

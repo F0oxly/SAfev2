@@ -63,7 +63,7 @@ export async function checkAllSites() {
   const results = [];
   for (const site of sites) {
     const result = await checkSingleSite(site);
-    results.push(result);
+    if (result) results.push(result);
   }
 
   await updateBadge();
@@ -140,6 +140,7 @@ export async function checkSingleSite(site) {
     lastChecked: nowIso,
     lastStatusChange: (previousStatus !== newStatus) ? nowIso : site.lastStatusChange
   });
+  if (!updatedSite) return null;
 
   // Detecção de Mudança de Estado e Notificações
   if (previousStatus && previousStatus !== 'unknown' && previousStatus !== newStatus) {
@@ -238,6 +239,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           return;
         }
         const updated = await checkSingleSite(site);
+        if (!updated) {
+          sendResponse({ success: false, error: 'Site não encontrado' });
+          return;
+        }
         await updateBadge();
         sendResponse({ success: true, site: updated });
       } else if (message.action === 'ANALYZE_URL_SECURITY') {
