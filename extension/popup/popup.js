@@ -47,6 +47,7 @@ const DOM = {
   previewRiskReasons: document.getElementById('preview-risk-reasons'),
   settingCheckInterval: document.getElementById('setting-check-interval'),
   settingSensitivity: document.getElementById('setting-sensitivity'),
+  settingGeminiKey: document.getElementById('setting-gemini-key'),
   settingBackendUrl: document.getElementById('setting-backend-url'),
   settingNotificationsEnabled: document.getElementById('setting-notifications-enabled'),
   btnSaveSettings: document.getElementById('btn-save-settings'),
@@ -380,6 +381,7 @@ function setupEventListeners() {
       const updatedConfig = {
         checkIntervalMinutes: parseInt(DOM.settingCheckInterval.value, 10) || 2,
         threatSensitivity: DOM.settingSensitivity.value || 'standard',
+        geminiApiKey: DOM.settingGeminiKey ? DOM.settingGeminiKey.value.trim() : '',
         backendUrl: DOM.settingBackendUrl.value.trim() || 'http://localhost:3000',
         notificationsEnabled: DOM.settingNotificationsEnabled.checked
       };
@@ -517,6 +519,9 @@ async function loadSettings() {
   }
   if (DOM.settingSensitivity) {
     DOM.settingSensitivity.value = config.threatSensitivity || 'standard';
+  }
+  if (DOM.settingGeminiKey) {
+    DOM.settingGeminiKey.value = config.geminiApiKey || '';
   }
   if (DOM.settingBackendUrl) {
     DOM.settingBackendUrl.value = config.backendUrl || 'http://localhost:3000';

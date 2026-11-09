@@ -7,8 +7,21 @@
  * de forma contextualizada, rápida e com tratamento robusto de erros e fallbacks.
  */
 
-// ─── Chave e Configurações da API Gemini ──────────────────────────────────────
-export const GEMINI_API_KEY = "AQ.Ab8RN6Ke875qdPL6ZA0kXTkTF_8obnH0d5gqjFxCVPx1MsKZpg";
+import { StorageManager } from '../storage/storage-manager.js';
+import { GEMINI_API_KEY as LOCAL_SECRETS_KEY } from './secrets.js';
+
+// ─── Configurações de Acesso Seguro ──────────────────────────────────────────
+// A chave nunca é exposta no código versionado:
+// Pode ser configurada na aba 'Ajustes' da extensão ou no arquivo local 'secrets.js'.
+export async function getActiveGeminiApiKey() {
+  try {
+    const config = await StorageManager.getConfig();
+    if (config?.geminiApiKey && config.geminiApiKey.trim()) {
+      return config.geminiApiKey.trim();
+    }
+  } catch {}
+  return (LOCAL_SECRETS_KEY || '').trim();
+}
 
 // Lista de modelos ordenados por prioridade (3.5-flash-lite é ultra-rápido e estável)
 const GEMINI_MODELS = [
@@ -54,8 +67,14 @@ export const TRUSTED_DOMAINS = [
  * @returns {Promise<string|null>} Resposta em texto puro ou null
  */
 async function callGeminiApi(promptText) {
+  const apiKey = await getActiveGeminiApiKey();
+  if (!apiKey) {
+    console.warn('[SafeWeb Gemini] Nenhuma chave de API configurada. Adicione sua chave em Ajustes ou em secrets.js.');
+    return null;
+  }
+
   for (const model of GEMINI_MODELS) {
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
+    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), GEMINI_TIMEOUT_MS);
 

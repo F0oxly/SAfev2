@@ -15,7 +15,8 @@ const DEFAULT_CONFIG = {
   backendUrl: 'http://localhost:3000',
   notificationsEnabled: true,
   useBackend: true,
-  threatSensitivity: 'standard' // 'standard' | 'strict'
+  threatSensitivity: 'standard', // 'standard' | 'strict'
+  geminiApiKey: ''
 };
 
 export class StorageManager {

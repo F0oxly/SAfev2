@@ -138,3 +138,7 @@ dist
 node_modules/
 backend/node_modules/
 .env
+
+
+# SafeWeb Extension Local Secrets (nunca enviar chaves de API para o Git/GitHub)
+extension/services/secrets.js
