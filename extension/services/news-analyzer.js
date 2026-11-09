@@ -279,10 +279,10 @@ export class LocalNewsAnalyzer {
 
     // ══════════════════════════════════════════════════════════════════════
     // CAMADA PRIMÁRIA: GEMINI AI
-    // O título ou a URL já fornecem contexto suficiente para analisar a notícia.
+    // O título, a URL ou o texto já fornecem contexto suficiente para analisar a notícia.
     // ══════════════════════════════════════════════════════════════════════
     let geminiResult = null;
-    const hasGeminiInput = Boolean((title || '').trim() || (url || '').trim());
+    const hasGeminiInput = Boolean((title || '').trim() || (url || '').trim() || (text || '').trim());
 
     if (hasGeminiInput) {
       try {
@@ -292,22 +292,21 @@ export class LocalNewsAnalyzer {
       }
     }
 
-    // Se a Gemini retornou um resultado válido, sobrescreve a classificação local
-    if (geminiResult) {
+    // Se a Gemini retornou um resultado válido (não fallback), aplica a classificação inteligente
+    if (geminiResult && geminiResult.fonte === 'gemini') {
       const verdictMap = {
-        'CONFIAVEL': { classification: '🟢 FONTE CONFIÁVEL', riskLevel: 'reliable', badgeColor: '#16a34a' },
-        'SUSPEITO': { classification: '🟡 ALERTA DE SENSACIONALISMO', riskLevel: 'warning', badgeColor: '#d97706' },
-        'FAKE_NEWS': { classification: '🔴 ALERTA DE FAKE NEWS', riskLevel: 'debunked', badgeColor: '#dc2626' }
+        'CONFIAVEL': { riskLevel: 'reliable' },
+        'SUSPEITO': { riskLevel: 'warning' },
+        'FAKE_NEWS': { riskLevel: 'debunked' }
       };
 
-      const mapped = verdictMap[geminiResult.veredicto];
-      if (mapped) {
-        classification = mapped.classification;
-        riskLevel = mapped.riskLevel;
-        badgeColor = mapped.badgeColor;
+      classification = geminiResult.badge || classification;
+      badgeColor = geminiResult.badgeColor || badgeColor;
+      if (verdictMap[geminiResult.veredicto]) {
+        riskLevel = verdictMap[geminiResult.veredicto].riskLevel;
       }
 
-      // Insere a explicação da IA no topo de reasons como contexto primário
+      // Insere a explicação clara da IA no topo de reasons como contexto primário
       if (geminiResult.explicacao) {
         reasons.unshift(`🤖 Análise Gemini AI: ${geminiResult.explicacao}`);
       }
@@ -333,7 +332,7 @@ export class LocalNewsAnalyzer {
       geminiVeredicto: geminiResult?.veredicto || null,
       geminiBadge: geminiResult?.badge || null,
       geminiExplicacao: geminiResult?.explicacao || null,
-      analyzedBy: geminiResult ? 'gemini+heuristica' : 'heuristica',
+      analyzedBy: (geminiResult && geminiResult.fonte === 'gemini') ? 'gemini+heuristica' : 'heuristica',
       analyzedAt: new Date().toISOString()
     };
   }

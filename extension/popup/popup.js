@@ -11,6 +11,7 @@ import { StorageManager, DEFAULT_CONFIG } from '../storage/storage-manager.js';
 import { SecurityAnalyzer } from '../services/security-analyzer.js';
 import { ApiClient } from '../services/api-client.js';
 import { LocalNewsAnalyzer, DEMO_CASES } from '../services/news-analyzer.js';
+import { avaliarSegurancaSiteComGemini } from '../services/gemini-analyzer.js';
 
 // Estado Local da UI
 let currentSiteFilter = 'all'; // 'all' | 'online' | 'offline'
@@ -612,10 +613,23 @@ async function handleAddSite() {
     DOM.btnSaveSite.textContent = 'Cadastrando...';
 
     const pageContext = await getSitePageContext(validation.cleanUrl);
-    const reputation = await ApiClient.evaluateSecurity(validation.cleanUrl, {
+    let reputation = await ApiClient.evaluateSecurity(validation.cleanUrl, {
       title: pageContext.title || alias || validation.urlObj.hostname,
       context: pageContext.context
     });
+
+    // Se o backend estiver indisponível, avalia a reputação via Gemini AI
+    if (!reputation) {
+      const geminiRep = await avaliarSegurancaSiteComGemini(validation.cleanUrl, pageContext.title || alias);
+      if (geminiRep) {
+        reputation = {
+          riskLevel: geminiRep.riskLevel,
+          classification: geminiRep.classification,
+          reasons: [geminiRep.reason]
+        };
+      }
+    }
+
     const securityFields = getSiteSecurityFields(analysis, reputation);
 
     const newSite = await SitesStorage.add({
@@ -760,10 +774,20 @@ async function renderDashboard() {
       const config = await StorageManager.getConfig();
       const localAnalysis = SecurityAnalyzer.analyze(site.url, config.threatSensitivity);
       const pageContext = await getSitePageContext(site.url);
-      const reputation = await ApiClient.evaluateSecurity(site.url, {
+      let reputation = await ApiClient.evaluateSecurity(site.url, {
         title: pageContext.title || site.alias || site.hostname,
         context: pageContext.context
       });
+      if (!reputation) {
+        const geminiRep = await avaliarSegurancaSiteComGemini(site.url, pageContext.title || site.alias);
+        if (geminiRep) {
+          reputation = {
+            riskLevel: geminiRep.riskLevel,
+            classification: geminiRep.classification,
+            reasons: [geminiRep.reason]
+          };
+        }
+      }
       if (reputation) {
         const updatedSite = await SitesStorage.update(
           site.id,
