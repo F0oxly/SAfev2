@@ -1,40 +1,95 @@
-# SafeWeb 🛡️ (v1.1)
-> **Projeto Acadêmico:** Extensão para Google Chrome (Manifest V3) & Backend Auxiliar em Node.js  
-> **Autor & Desenvolvimento:** Iury  
-> **Objetivo:** Segurança proativa durante a navegação web e monitoramento contínuo de disponibilidade de serviços (Uptime).
+# SafeWeb 🛡️ (v2.0)
+
+> **Projeto Acadêmico:** Extensão para Google Chrome (Manifest V3) com IA Gemini e Backend Auxiliar em Node.js  
+> **Desenvolvido por:** Iury & Equipe  
+> **Objetivo:** Segurança proativa na navegação web, monitoramento contínuo de disponibilidade (Uptime), combate à desinformação com inteligência artificial e proteção contra ameaças digitais.
 
 ---
 
 ## 📌 Sumário
 - [Visão Geral](#-visão-geral)
-- [Novidades da Versão 1.1](#-novidades-da-versão-11)
-- [Estrutura do Repositório](#-estrutura-do-repositório)
+- [Principais Funcionalidades](#-principais-funcionalidades)
+- [Módulo SafeWeb Informa (IA & Fake News)](#-módulo-safeweb-informa-ia--fake-news)
+- [Módulo de Monitoramento & Uptime](#-módulo-de-monitoramento--uptime)
+- [Módulo de Segurança Heurística & Threat Intelligence](#-módulo-de-segurança-heurística--threat-intelligence)
+- [Base Comunitária de Denúncias](#-base-comunitária-de-denúncias)
 - [Arquitetura do Sistema](#-arquitetura-do-sistema)
-- [Níveis de Risco de Segurança](#-níveis-de-risco-de-segurança)
-- [Como Instalar e Testar a Extensão](#-como-instalar-e-testar-a-extensão)
-- [Como Executar o Backend (Node.js)](#-como-executar-o-backend-nodejs)
+- [Estrutura do Repositório](#-estrutura-do-repositório)
+- [Como Instalar e Usar a Extensão](#-como-instalar-e-usar-a-extensão)
+- [Configuração da Chave da Gemini API](#-configuração-da-chave-da-gemini-api)
+- [Como Executar o Backend (Opcional)](#-como-executar-o-backend-opcional)
 - [Segurança & Gestão de Segredos](#-segurança--gestão-de-segredos)
-- [APIs do Chrome Utilizadas](#-apis-do-chrome-utilizadas)
+- [APIs do Chrome Manifest V3 Utilizadas](#-apis-do-chrome-manifest-v3-utilizadas)
 - [Licença](#-licença)
 
 ---
 
 ## 🌐 Visão Geral
 
-O **SafeWeb** foi desenvolvido como uma solução híbrida para dois problemas fundamentais da web moderna:
-1. **Monitoramento de Disponibilidade:** Acompanha o status de sites cadastrados pelo usuário, calculando métricas de disponibilidade (Uptime), detectando quedas de conexão, erros HTTP (4xx, 5xx), timeouts e disparando notificações nativas no sistema operacional.
-2. **Análise de Risco de URLs:** Avalia aspectos estruturais de URLs (protocolo HTTP vs HTTPS, ataques homográficos/IDN Punycode, combosquatting de marcas, typosquatting via distância Levenshtein, uso de IPs literais, entropia de Shannon, encurtadores e TLDs de alto risco), fornecendo orientações claras sem falsas promessas de "100% de segurança".
+O **SafeWeb** é uma solução completa e multiplataforma desenvolvida para atender aos desafios contemporâneos da web:
+1. **Monitoramento de Serviços:** Vigilância de disponibilidade (Uptime) de sites e sistemas, detectando quedas de conexão, latência elevada e erros HTTP com notificações no navegador.
+2. **Prevenção de Golpes & Phishing:** Detecção avançada de typosquatting, ataques homográficos (Punycode IDN), engenharia social de bancos e marcas brasileiras, entropia de Shannon e verificação contra bases de inteligência cibernética (**URLhaus** e **OpenPhish**).
+3. **Combate à Desinformação (SafeWeb Informa):** Verificação inteligente de notícias, desinformação e caça-cliques com apoio da **Gemini API do Google (gemini-3.5-flash-lite)** e checagem cruzada com agências de fact-checking brasileiras.
+4. **Colaboração Comunitária:** Canal para que usuários relatem sites maliciosos, gerando inteligência coletiva de proteção.
 
 ---
 
-## ⚡ Novidades da Versão 1.1
+## ⚡ Principais Funcionalidades
 
-- 🎯 **Captura Automática da Aba Atual:** Botões inteligentes no formulário de cadastro e no scanner que puxam a URL e o título da aba aberta no Chrome com um único clique.
-- 🔍 **Detecção de Typosquatting e Combosquatting:** Identificação de imitação e falsificação de marcas populares brasileiras e globais (ex: Nubank, Itaú, Bradesco, Caixa, Mercado Livre, Gov.br, Google, Apple) através de comparação de raízes e algoritmo de distância Levenshtein.
-- 🔗 **Detecção de Encurtadores de Link & Spoofing:** Identificação de serviços como `bit.ly`, `tinyurl` e uso malicioso do caractere `@` para mascaramento de destino.
-- ⚙️ **Painel de Ajustes (Configurações):** Controle de frequência de checagem do alarme (1 a 30 min), alternância de notificações nativas, configuração da URL do backend e seleção do modo de sensibilidade heurística (Padrão vs Rigorosa/Strict).
-- 📊 **Exportação de Dados (Auditoria Acadêmica):** Download de relatórios de monitoramento e logs de ocorrências em formatos **JSON** e **CSV**.
-- 🔎 **Filtros e Métricas em Tempo Real:** Campo de busca rápida, filtros por status (Online/Offline) e indicador de percentual médio de **Uptime**.
+- 🧠 **Auditoria com Gemini AI Oficial:** Avaliação contextualizada de textos e matérias jornalísticas em segundos, sem categorizações genéricas.
+- 🎯 **Captura Inteligente da Aba Ativa:** Preenchimento automático com um clique da URL, título e corpo textual extraído diretamente da página via `chrome.scripting`.
+- 🔍 **Detecção de Falsificação de Marcas (Typosquatting/Combosquatting):** Identificação de imitações de Nubank, Itaú, Bradesco, Caixa, Mercado Livre, Gov.br, Google, Apple, etc., através do algoritmo de distância Levenshtein.
+- 🚨 **Sinais de Alerta & Clickbait:** Análise de tom alarmista, letras maiúsculas exageradas, gatilhos de urgência de compartilhamento e TLDs de alto risco (`.xyz`, `.top`, `.site`, etc.).
+- 🛡️ **Threat Intelligence Integrada:** Suporte a blocklists abertas de malware e phishing mantidas por URLhaus e OpenPhish.
+- ⚙️ **Painel de Ajustes Completo:** Configuração de intervalos de alarme (1 a 30 min), sensibilidade heurística, URL do backend e salvamento seguro da chave Gemini.
+- 📊 **Auditoria & Exportação Acadêmica:** Exportação completa de logs de monitoramento e histórico de verificações em formatos **JSON** e **CSV**.
+
+---
+
+## 📰 Módulo SafeWeb Informa (IA & Fake News)
+
+O **SafeWeb Informa** foi planejado para apoiar o letramento digital e o pensamento crítico do leitor:
+
+### Classificações do Sistema:
+- 🟢 **FONTE CONFIÁVEL:** Veículos de imprensa com expediente auditável, conselho editorial reconhecido e compromisso jornalístico.
+- 🟡 **ALERTA DE SENSACIONALISMO / PRECISA DE MAIS VERIFICAÇÃO:** Conteúdos apelativos, manchetes caça-cliques, blogs anônimos ou informações sem embasamento suficiente.
+- 🔴 **ALERTA DE FAKE NEWS / ALEGAÇÃO DESMENTIDA:** Boatos identificados, curas milagrosas falsas, golpes financeiros ou teorias conspiratórias refutadas por checagens oficiais.
+
+### Recursos do Informa:
+- **Resumo Explicativo da IA:** Frase clara, direta e acessível sintetizando o porquê daquele veredito.
+- **Checagem Cruzada em 1 Clique:** Atalhos imediatos de busca nas principais agências de checagem do Brasil: *Fato ou Fake (G1)*, *Agência Lupa*, *Aos Fatos* e *UOL Confere*.
+- **Casos de Demonstração Pré-Carregados:** Botão com exemplos reais para testes em apresentações e salas de aula.
+
+---
+
+## 📈 Módulo de Monitoramento & Uptime
+
+- Cálculo dinâmico de taxa de disponibilidade (**% Uptime**).
+- Resumo visual de sites **Online**, **Offline** e **Total**.
+- Alertas nativos no sistema operacional em caso de instabilidade ou restabelecimento do serviço.
+- Filtros rápidos por status e barra de pesquisa em tempo real.
+
+---
+
+## 🏛️ Arquitetura do Sistema
+
+```mermaid
+graph TD
+    A[Usuário no Chrome] --> B[Extensão SafeWeb Manifest V3]
+    B --> C[Painel Popup: Sites, Cadastro, Informa, Denúncias, Ajustes]
+    B --> D[Background Service Worker: Alarmes & Notificações]
+    
+    C -->|Verificação de Notícias| E[Gemini AI Google - gemini-3.5-flash-lite]
+    C -->|Extração de Metadados| F[chrome.scripting API]
+    C -->|Armazenamento Local| G[chrome.storage.local]
+    
+    B -.->|Opcional: Modo Estendido| H[Backend Node.js Express]
+    H --> I[SQLite: known_threats & reports]
+    H --> J[Sync URLhaus / OpenPhish]
+```
+
+- **Modo Autônomo (100% no Cliente):** A extensão funciona de forma completa e independente, executando heurísticas locais e chamando a API do Gemini diretamente pelo navegador.
+- **Modo Estendido (Com Backend):** O servidor Node.js adiciona persistência em banco relacional SQLite e sincronização com listas de ameaças de inteligência cibernética.
 
 ---
 
@@ -42,135 +97,97 @@ O **SafeWeb** foi desenvolvido como uma solução híbrida para dois problemas f
 
 ```text
 SAfev2/
-├── extension/                      # Código da Extensão Google Chrome (Manifest V3)
-│   ├── manifest.json               # Configuração e permissões do Manifest V3
-│   ├── popup/                      # Interface visual do Popup
-│   │   ├── popup.html              # Estrutura HTML semântica com abas e filtros
-│   │   ├── popup.css               # Estilização moderna e acadêmica
-│   │   └── popup.js                # Lógica, captura de abas e exportações
+├── extension/                      # Extensão Google Chrome (Manifest V3)
+│   ├── manifest.json               # Configurações, permissões e metadados MV3
+│   ├── popup/                      # Interface gráfica do usuário
+│   │   ├── popup.html              # Estrutura HTML modular (6 abas ativas)
+│   │   ├── popup.css               # Estilos modernos, responsivos e acessíveis
+│   │   └── popup.js                # Controlador principal de eventos e renderização
 │   ├── background/
-│   │   └── service-worker.js       # Background Service Worker e Alarmes dinâmicos
+│   │   └── service-worker.js       # Tarefas em segundo plano e monitoramento periódico
 │   ├── services/
-│   │   ├── security-analyzer.js    # Módulo heurístico avançado de análise de risco
-│   │   └── api-client.js           # Comunicação com o backend
+│   │   ├── gemini-analyzer.js      # Integração direta com Google Gemini API
+│   │   ├── news-analyzer.js        # Motor de desinformação (IA + Heurística local)
+│   │   ├── security-analyzer.js    # Motor de análise de URLs, Levenshtein e risco
+│   │   ├── api-client.js           # Cliente HTTP com o backend Node.js
+│   │   ├── secrets.example.js      # Modelo de segredos (versionado no Git)
+│   │   └── secrets.js              # Segredos locais (protegido no .gitignore)
 │   ├── storage/
-│   │   ├── storage-manager.js      # Wrapper sobre chrome.storage.local e configs
-│   │   ├── sites-storage.js        # Persistência de sites cadastrados
-│   │   └── history-storage.js      # Persistência do histórico de eventos
+│   │   ├── storage-manager.js      # Wrapper sobre chrome.storage.local
+│   │   ├── sites-storage.js        # Persistência de sites monitorados
+│   │   └── history-storage.js      # Persistência de histórico de eventos e notícias
 │   ├── styles/
-│   │   └── common.css              # Design System e variáveis CSS
-│   └── icons/                      # Ícones nos tamanhos exigidos (16, 48, 128)
-│       ├── icon-16.png
-│       ├── icon-48.png
-│       └── icon-128.png
+│   │   └── common.css              # Variáveis CSS, layout e tipografia
+│   └── icons/                      # Ícones em resolução 16px, 48px e 128px
 │
-├── backend/                        # Serviço Auxiliar em Node.js (Express)
+├── backend/                        # Backend Auxiliar em Node.js (Express + SQLite)
 │   ├── src/
-│   │   ├── server.js               # Ponto de entrada do servidor HTTP
-│   │   ├── services/
-│   │   │   ├── monitor.js          # Worker de monitoramento e testes HTTP
-│   │   │   └── security.js         # Gateway para Google Safe Browsing
-│   │   └── routes/
-│   │       ├── sites.js            # Rotas de cadastro e sincronização
-│   │       ├── history.js          # Rotas de histórico de incidentes
-│   │       └── security.js         # Rotas de análise de reputação
+│   │   ├── server.js               # Servidor HTTP Express
+│   │   ├── database.js             # Conexão SQLite e tabelas de ameaças/denúncias
+│   │   ├── routes/                 # Rotas de sites, segurança, notícias e relatórios
+│   │   └── services/               # Workers de monitoramento e Threat Intelligence
 │   ├── package.json
-│   └── .env.example                # Exemplo de configuração de variáveis
+│   └── .env.example
 │
-└── README.md                       # Documentação completa
+├── Apresentacao_SafeWeb.pdf        # Documento completo formatado para apresentação
+├── APRESENTACAO_SAFEWEB.md         # Roteiro de slides detalhado para PowerPoint
+└── README.md                       # Documentação técnica oficial
 ```
 
 ---
 
-## 🏛️ Arquitetura do Sistema
+## 🚀 Como Instalar e Usar a Extensão
 
-O sistema opera com independência de camadas:
-* **Modo Autônomo (Extensão Pura):** Caso o backend não esteja ativo, o Service Worker da extensão utiliza `chrome.alarms` e `fetch` em background para checar os domínios e executar a análise heurística de risco localmente.
-* **Modo Estendido (Extensão + Backend):** Com o backend em execução na porta 3000, o monitoramento ganha capacidade de checagem contínua, métricas consolidadas de latência e integração com APIs de inteligência contra ameaças.
-* **Auditoria Gemini de Sites:** Ao cadastrar ou testar um domínio sem ameaça grave confirmada, o backend envia ao Gemini a URL, o título da página e até 1.800 caracteres de contexto visível (quando a aba ativa pertence ao domínio) para procurar sinais de phishing, imitação de marcas, lojas falsas, pirataria e ofertas fraudulentas. O resultado é exibido nos detalhes do site; sites classificados como suspeitos recebem o alerta **🔴 SITE SUSPEITO**. A chave `GEMINI_API_KEY` permanece apenas no `.env` do backend.
-
----
-
-## 🛡️ Níveis de Risco de Segurança
-
-Em conformidade com as boas práticas acadêmicas de segurança da informação, o SafeWeb **não utiliza declarações absolutas como "Site 100% Seguro"**. O sistema adota três classificações fundamentadas:
-
-| Indicador | Significado | Critérios Avaliados |
-| :--- | :--- | :--- |
-| 🟢 **Nenhum risco conhecido** | Baixa probabilidade de anomalia estrutural | HTTPS válido, domínio padrão, baixa entropia, sem termos maliciosos identificados. |
-| 🟡 **Atenção** | Fatores que demandam cautela do usuário | Conexão HTTP sem TLS, encurtador de URL, subdomínios excessivos, portas incomuns ou termos sensíveis. |
-| 🔴 **Possível ameaça** | Múltiplos indicadores críticos de perigo | Combosquatting/Typosquatting de bancos e marcas, ataque Punycode (`xn--`), IP literal, download direto de executáveis ou TLDs de alto abuso. |
-
----
-
-## 🚀 Como Instalar e Testar a Extensão
-
-1. Abra o navegador **Google Chrome**.
+1. Abra o **Google Chrome** (ou navegadores baseados em Chromium como Brave, Edge ou Opera).
 2. Acesse `chrome://extensions` na barra de endereços.
-3. No canto superior direito, ative a opção **Modo do desenvolvedor** (*Developer mode*).
+3. No canto superior direito, ative o interruptor **Modo do desenvolvedor** (*Developer mode*).
 4. Clique no botão **Carregar sem compactação** (*Load unpacked*).
 5. Selecione a pasta `extension/` deste projeto:
    ```text
    C:\Users\iury\Documents\Faculdade\SAfev2\extension
    ```
-6. O ícone do **SafeWeb** aparecerá na barra de ferramentas do Chrome.
-7. Clique no ícone para abrir o Painel de Controle:
-   * **Sites:** Visualize status online/offline, filtre, busque e exporte dados.
-   * **Cadastrar:** Adicione domínios manualmente ou use o botão para capturar a aba atual.
-   * **Histórico:** Consulte ocorrências, filtre eventos e exporte em JSON/CSV.
-   * **Scanner:** Analise a segurança de qualquer URL ou da página atual.
-   * **Ajustes:** Personalize intervalos de verificação, sensibilidade heurística e alertas.
+6. O ícone do **SafeWeb** será fixado na barra de ferramentas. Clique nele para abrir a extensão!
 
 ---
 
-## ⚙️ Como Executar o Backend (Node.js)
+## 🔑 Configuração da Chave da Gemini API
 
-1. Certifique-se de ter o Node.js (v18+) instalado.
-2. Navegue até o diretório `backend`:
-   ```bash
-   cd backend
-   ```
-3. Crie o arquivo `.env` a partir do exemplo:
-   ```bash
-   copy .env.example .env
-   ```
-   Para habilitar a análise com IA, preencha `GEMINI_API_KEY` nesse arquivo.
-4. Instale as dependências:
-   ```bash
-   npm install
-   ```
-5. Inicie o servidor:
-   ```bash
-   npm start
-   ```
-6. O servidor iniciará em `http://localhost:3000`. O popup da extensão detectará automaticamente a conexão.
+Para habilitar as respostas inteligentes do Google Gemini no módulo SafeWeb Informa:
+
+1. Obtenha uma chave gratuita no [Google AI Studio](https://aistudio.google.com/apikey).
+2. Abra a extensão no navegador e clique na aba **Ajustes** (ícone de engrenagem).
+3. No campo **Chave de API do Gemini (Google AI)**, cole sua chave.
+4. Clique em **Salvar Ajustes**.
+
+> 🔒 **Privacidade Garantida:** A chave digitada na aba de Ajustes é armazenada exclusivamente no armazenamento local criptografado do seu próprio navegador (`chrome.storage.local`). Ela **nunca** é versionada, commitada ou enviada ao GitHub.
 
 ---
 
 ## 🔐 Segurança & Gestão de Segredos
 
-* **Extensão (Zero Secrets):** Nenhuma chave de API privada ou segredo é embarcado no código da extensão.
-* **Backend:** Todas as credenciais de serviços externos, inclusive `GEMINI_API_KEY`, residem exclusivamente no arquivo `.env` do backend, fora do controle de versão. Sem a chave, a extensão continua usando a análise heurística local.
-* **Chave anteriormente exposta:** Se uma chave Gemini já foi incluída em uma versão anterior da extensão, revogue-a no Google AI Studio e gere outra antes de configurar o `.env`.
-* **Permissões Mínimas:** O `manifest.json` declara apenas as permissões essenciais (`storage`, `alarms`, `notifications`, `activeTab`, `tabs`).
+- **Zero Secret Leaks:** Nenhuma credencial de API é enviada para o repositório público.
+- **Proteção no `.gitignore`:** Arquivos como `.env` e `extension/services/secrets.js` são estritamente ignorados pelo controle de versão.
+- **Princípio do Menor Privilégio:** O `manifest.json` solicita apenas permissões estritamente necessárias (`storage`, `alarms`, `notifications`, `activeTab`, `tabs`, `scripting`).
 
 ---
 
-## 🧩 APIs do Chrome Utilizadas
+## 🧩 APIs do Chrome Manifest V3 Utilizadas
 
-* `chrome.storage.local`: Persistência local assíncrona dos dados de monitoramento, configurações e histórico.
-* `chrome.alarms`: Execução programada e econômica de checagens em segundo plano.
-* `chrome.notifications`: Disparo de avisos nativos em caso de indisponibilidade ou recuperação de domínios.
-* `chrome.tabs`: Leitura segura da URL e título da aba ativa sob demanda.
-* `chrome.action`: Gerenciamento do popup e badges informativos de alerta no ícone.
-* `chrome.runtime`: Comunicação assíncrona entre o Popup e o Service Worker.
+- `chrome.storage.local`: Armazenamento assíncrono e persistente dos sites, histórico e chaves.
+- `chrome.alarms`: Agendamento inteligente e eficiente de testes de disponibilidade em background.
+- `chrome.notifications`: Alertas nativos do sistema operacional para quedas de sites.
+- `chrome.scripting`: Inspeção segura e legítima do DOM da aba ativa para extração de metadados de notícias.
+- `chrome.tabs`: Identificação de URL e título de navegação sob demanda.
+- `chrome.runtime`: Mensageria assíncrona entre o Popup e o Service Worker.
 
 ---
 
-## 👨‍💻 Autoria & Desenvolvimento
-Projeto idealizado, arquitetado e desenvolvido por **Iury**, contemplando todas as etapas e componentes acadêmicos.
+## 👨‍💻 Autoria & Equipe
+
+Projeto acadêmico concebido, projetado e desenvolvido por **Iury & Equipe**.
 
 ---
 
 ## 📄 Licença
-Projeto desenvolvido para fins acadêmicos e educacionais. Distribuído sob a licença MIT.
+
+Distribuído sob a licença **MIT**. Uso livre para finalidades acadêmicas, educacionais e de pesquisa.
