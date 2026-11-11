@@ -23,12 +23,12 @@ export async function getActiveGeminiApiKey() {
   return (LOCAL_SECRETS_KEY || '').trim();
 }
 
-// Lista de modelos ordenados por prioridade (3.5-flash-lite é ultra-rápido e estável)
+// Lista de modelos ordenados por prioridade
 const GEMINI_MODELS = [
-  'gemini-3.5-flash-lite',
-  'gemini-3.8-flash',
-  'gemini-2.5-flash',
-  'gemini-flash-latest'
+  'gemini-2.0-flash-lite',
+  'gemini-2.0-flash',
+  'gemini-1.5-flash-8b',
+  'gemini-1.5-flash'
 ];
 
 const GEMINI_TIMEOUT_MS = 12000;
@@ -206,7 +206,7 @@ ESTRUTURA DE RESPOSTA OBRIGATÓRIA (Responda APENAS com este JSON válido):
  * @param {string} title 
  * @returns {Promise<Object|null>}
  */
-export async function avaliarSegurancaSiteComGemini(url, title = '') {
+export async function avaliarSegurancaSiteComGemini(url, title = '', pageContext = '') {
   let dominio = '';
   try {
     dominio = new URL(url.startsWith('http') ? url : `https://${url}`).hostname.replace(/^www\./, '').toLowerCase();
@@ -215,18 +215,38 @@ export async function avaliarSegurancaSiteComGemini(url, title = '') {
   }
 
   const promptText = `
-Você é um especialista em cibersegurança digital do SafeWeb.
-Avalie a reputação e o risco de segurança deste domínio/site:
-- URL: "${url}"
+Você é um especialista em cibersegurança e proteção ao consumidor digital do SafeWeb.
+Analise de forma criteriosa a reputação e o risco deste site:
+
+- URL completa: "${url}"
 - Domínio: "${dominio}"
 - Título da página: "${title || '(não informado)'}"
+- Contexto da página (trecho de texto ou metadados): "${(pageContext || '').slice(0, 500) || '(não disponível)'}"
 
-Classifique quanto a riscos de phishing, golpes digitais, sites falsos ou se é um domínio legítimo reconhecido.
-Responda APENAS em formato JSON:
+SINAIS CRÍTICOS — marque como "high" imediatamente se qualquer um estiver presente:
+- Site distribui downloads de software, jogos, filmes ou séries sem licença oficial (pirataria/warez).
+- Oferece download gratuito de software pago ou de título ainda não lançado oficialmente (ex: GTA 6, novo Windows, etc.).
+- Domínio contém termos como "repack", "crack", "warez", "keygen", "nulled", "skidrow", "fitgirl", "steamunlocked".
+- Site promete "crack", "serial key", "activator", "patch" para contornar proteção de software.
+- Existem botões ou links de "Download Mirrors" para executáveis sem identificação clara do publicador.
+- Domínio imita marcas conhecidas (typosquatting, combosquatting, punycode).
+- Protocolo HTTP sem criptografia em página que solicita dados pessoais ou pagamentos.
+- Site de phishing simulando banco, governo ou loja conhecida.
+
+SINAIS DE ATENÇÃO — marque como "attention" se presentes sem os sinais críticos acima:
+- Site desconhecido com promessas de ganhos fáceis, downloads gratuitos incomuns ou ofertas extraordinárias.
+- Uso de encurtadores de URL que ocultam o destino real.
+- Domínio com TLD suspeito (.tk, .ml, .xyz, .top, .site, .click) sem ser serviço estabelecido.
+
+PONTOS POSITIVOS — marque como "low" se:
+- Domínio é de empresa, portal de notícias, governo ou universidade reconhecida.
+- Site usa HTTPS, tem identidade clara e não apresenta nenhum dos sinais acima.
+
+Responda APENAS em JSON válido (sem markdown, sem texto extra):
 {
   "riskLevel": "low" | "attention" | "high",
-  "classification": "🟢 Domínio Confiável" | "🟡 Requer Atenção" | "🔴 Possível Ameaça / Phishing",
-  "reason": "Explicação resumida em uma frase."
+  "classification": "🟢 Domínio Confiável" | "🟡 Requer Atenção" | "🔴 Possível Ameaça",
+  "reason": "Explicação direta em uma frase, em português, acessível a leigos."
 }
 `.trim();
 

@@ -623,10 +623,18 @@ async function handleAddSite() {
       context: pageContext.context
     });
 
-    // Se o backend estiver indisponível, avalia a reputação via Gemini AI
-    if (!reputation) {
-      const geminiRep = await avaliarSegurancaSiteComGemini(validation.cleanUrl, pageContext.title || alias);
-      if (geminiRep) {
+    // Gemini AI sempre é consultado (em paralelo ou como fallback)
+    // Isso garante detecção de pirataria, golpes e sites suspeitos mesmo com backend ativo
+    const geminiRep = await avaliarSegurancaSiteComGemini(
+      validation.cleanUrl,
+      pageContext.title || alias,
+      pageContext.context || ''
+    );
+    if (geminiRep) {
+      // Gemini tem prioridade se detectou risco maior que o backend ou se backend está indisponível
+      const riskPriority = { low: 0, attention: 1, high: 2 };
+      const backendLevel = reputation?.riskLevel === 'critical' ? 'high' : (reputation?.riskLevel || 'low');
+      if (!reputation || riskPriority[geminiRep.riskLevel] >= riskPriority[backendLevel]) {
         reputation = {
           riskLevel: geminiRep.riskLevel,
           classification: geminiRep.classification,
@@ -783,9 +791,16 @@ async function renderDashboard() {
         title: pageContext.title || site.alias || site.hostname,
         context: pageContext.context
       });
-      if (!reputation) {
-        const geminiRep = await avaliarSegurancaSiteComGemini(site.url, pageContext.title || site.alias);
-        if (geminiRep) {
+      // Gemini sempre é consultado para segurança (detecta pirataria, golpes, etc.)
+      const geminiRep = await avaliarSegurancaSiteComGemini(
+        site.url,
+        pageContext.title || site.alias,
+        pageContext.context || ''
+      );
+      if (geminiRep) {
+        const riskPriority = { low: 0, attention: 1, high: 2 };
+        const backendLevel = reputation?.riskLevel === 'critical' ? 'high' : (reputation?.riskLevel || 'low');
+        if (!reputation || riskPriority[geminiRep.riskLevel] >= riskPriority[backendLevel]) {
           reputation = {
             riskLevel: geminiRep.riskLevel,
             classification: geminiRep.classification,

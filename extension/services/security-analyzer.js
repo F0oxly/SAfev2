@@ -44,6 +44,36 @@ export class SecurityAnalyzer {
     'eicar', 'anti-malware-testfile', 'malware-test', 'virus-test', 'testfile'
   ];
 
+  // Palavras-chave de pirataria, cracks, downloads falsos e warez
+  static PIRACY_KEYWORDS = [
+    'repack', 'repacks', 'crack', 'cracked', 'crackonly', 'keygen', 'serial-key',
+    'free-download', 'download-gratis', 'gratis-download', 'baixar-gratis',
+    'full-version-free', 'activator', 'warez', 'torrent-download',
+    'full-crack', 'license-key-free', 'nulled', 'pirated', 'crackfix',
+    'skidrow', 'codex', 'plaza', 'fitgirl', 'dodi', 'steamunlocked',
+    'igg-games', 'ocean-of-games', 'cpy.crack', 'unlocked-games'
+  ];
+
+  // Padrões suspeitos: jogos/software não lançado ou pago oferecido como gratuito
+  static SCAM_URL_PATTERNS = [
+    /\b(gta|grand.theft.auto).{0,10}(6|vi)\b/i,
+    /\b(free|gratis|crack|download).{0,20}(game|jogo|software|windows|office)\b/i,
+    /download.{0,10}(crack|keygen|serial|activator|patch)/i,
+    /\b(warez|nulled|cracked)\b/i,
+    /\b(repacks?|skidrow|codex|plaza)\b/i,
+    /\bdownload.mirrors?\b/i,
+    /(magnet|torrent).{0,20}(download|link)/i
+  ];
+
+  // Domínios de sites de pirataria conhecidos (para sinalização direta)
+  static KNOWN_PIRACY_DOMAINS = [
+    'fitgirl-repacks.site', 'steamunlocked.net', 'igg-games.com',
+    'ocean-of-games.com', 'skidrowcodex.net', 'skidrowreloaded.com',
+    'dodi-repacks.site', 'gog-games.com', 'crackwatch.com',
+    'cracked-games.org', 'gametrex.com', 'getintopc.com',
+    'filehippo.com', 'softonic.com', 'downloadly.ir'
+  ];
+
   // Marcas e serviços frequentemente visados por phishing/combosquatting
   static TARGET_BRANDS = [
     { name: 'Nubank', key: 'nubank', official: ['nubank.com.br', 'nu.com.br'] },
@@ -316,6 +346,40 @@ export class SecurityAnalyzer {
       score += 10;
       flags.push('non_standard_port');
       reasons.push(`Conexão utilizando porta de rede não convencional (:${url.port}).`);
+    }
+
+    // 14. Domínio de pirataria conhecida (match direto)
+    const isKnownPiracy = this.KNOWN_PIRACY_DOMAINS.some(d =>
+      hostname === d || hostname.endsWith('.' + d)
+    );
+    if (isKnownPiracy) {
+      score += 70;
+      flags.push('known_piracy_site');
+      reasons.push('Domínio identificado como site de distribuição de software pirata ou downloads não autorizados.');
+    }
+
+    // 15. Palavras-chave de pirataria/warez no hostname ou caminho
+    if (!isKnownPiracy) {
+      const foundPiracy = this.PIRACY_KEYWORDS.filter(kw =>
+        hostname.includes(kw) || pathname.includes(kw)
+      );
+      if (foundPiracy.length >= 1) {
+        const piracyScore = foundPiracy.length >= 2 ? 65 : 45;
+        score += piracyScore;
+        flags.push('piracy_keywords');
+        reasons.push(`Indicadores de pirataria ou distribuição não autorizada detectados na URL: ${foundPiracy.slice(0, 3).join(', ')}.`);
+      }
+
+      // 16. Padrões de URL suspeitos (regex): jogos não lançados, cracks, etc.
+      const matchedPattern = this.SCAM_URL_PATTERNS.find(rx => rx.test(fullHref));
+      if (matchedPattern && !flags.includes('piracy_keywords')) {
+        score += 50;
+        flags.push('scam_url_pattern');
+        reasons.push('A URL contém padrões associados a downloads não autorizados, cracks de software ou software pago oferecido gratuitamente.');
+      } else if (matchedPattern && flags.includes('piracy_keywords')) {
+        // Reforça o score se já tinha keyword + padrão combinado
+        score += 15;
+      }
     }
 
     // Determinação dos Níveis Acadêmicos Exigidos
