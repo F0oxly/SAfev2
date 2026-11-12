@@ -8,11 +8,10 @@
  */
 
 import { StorageManager } from '../storage/storage-manager.js';
-import { GEMINI_API_KEY as LOCAL_SECRETS_KEY } from './secrets.js';
 
 // ─── Configurações de Acesso Seguro ──────────────────────────────────────────
-// A chave nunca é exposta no código versionado:
-// Pode ser configurada na aba 'Ajustes' da extensão ou no arquivo local 'secrets.js'.
+// A chave nunca quebra o carregamento da extensão:
+// Pode ser configurada diretamente na aba 'Ajustes' da extensão ou no arquivo local 'secrets.js'.
 export async function getActiveGeminiApiKey() {
   try {
     const config = await StorageManager.getConfig();
@@ -20,7 +19,17 @@ export async function getActiveGeminiApiKey() {
       return config.geminiApiKey.trim();
     }
   } catch {}
-  return (LOCAL_SECRETS_KEY || '').trim();
+
+  // Carregamento dinâmico e resiliente: se secrets.js não existir (ex: clone limpo do Git),
+  // a extensão continua funcionando 100% com heurísticas locais sem travar a interface.
+  try {
+    const secrets = await import('./secrets.js');
+    if (secrets?.GEMINI_API_KEY && secrets.GEMINI_API_KEY.trim()) {
+      return secrets.GEMINI_API_KEY.trim();
+    }
+  } catch {}
+
+  return '';
 }
 
 // Lista de modelos ordenados por prioridade

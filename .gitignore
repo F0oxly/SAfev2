@@ -141,4 +141,3 @@ backend/node_modules/
 
 
 # SafeWeb Extension Local Secrets (nunca enviar chaves de API para o Git/GitHub)
-extension/services/secrets.js
